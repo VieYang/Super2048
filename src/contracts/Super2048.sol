@@ -125,8 +125,11 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
                 if (check) {
                     newI++;
                 }
-                for ( ;newI < 4; newI++){
-                    grid[x+4*newI] = 0;
+                if (newI < 4) {
+                    moved = true;
+                    for ( ;newI < 4; newI++){
+                        grid[x+4*newI] = 0;
+                    }
                 }
             }
         } else if (direction == Direction.Down) {
@@ -156,8 +159,11 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
                 if (check) {
                     newI++;
                 }
-                for ( ;newI < 4; newI++){
-                    grid[x+12-4*newI] = 0;
+                if (newI < 4) {
+                    moved = true;
+                    for ( ;newI < 4; newI++){
+                        grid[x+12-4*newI] = 0;
+                    }
                 }
             }
         } else if (direction == Direction.Left) {
@@ -187,8 +193,11 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
                 if (check) {
                     newI++;
                 }
-                for ( ;newI < 4; newI++){
-                    grid[x*4+newI] = 0;
+                if (newI < 4) {
+                    moved = true;
+                    for ( ;newI < 4; newI++){
+                        grid[x*4+newI] = 0;
+                    }
                 }
             }
         } else if (direction == Direction.Right) {
@@ -218,8 +227,11 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
                 if (check) {
                     newI++;
                 }
-                for ( ;newI < 4; newI++){
-                    grid[x*4+3-newI] = 0;
+                if (newI < 4) {
+                    moved = true;
+                    for ( ;newI < 4; newI++){
+                        grid[x*4+3-newI] = 0;
+                    }
                 }
             }
         } 
