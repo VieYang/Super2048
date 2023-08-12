@@ -12,16 +12,19 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
     Counters.Counter private _tokenIdCounter;
 
     mapping (address => uint256[16]) public grids;
+    mapping (uint256 => uint256[16]) public grids2048;
 
     // Game
     bytes32 public seed;
 
     enum Direction { Up, Down, Left, Right }
 
+    // mint
+    uint256 public constant MAX_SUPPLY = 3; // 42096
+    uint256 public constant MINT_THRESHOLD = 16; // 2048
+
     constructor() ERC721("Super2048", "2048") {
         seed = keccak256(abi.encodePacked(address(this), block.number, block.timestamp, msg.sender));
-        // grids[msg.sender] = [0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0];
-        grids[msg.sender] = [0,2,2,2,2,0,2,2,2,2,0,2,2,2,2,0];
     }
 
   
@@ -36,7 +39,10 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
     }
 
     function startGame() public {
-        address account = msg.sender;
+        _startGame(msg.sender);
+    }
+
+    function _startGame(address account) internal  {
         for (uint256 i = 0; i < 16; i++) {
             if (grids[account][i] != 0) {
                 // game started
@@ -71,7 +77,7 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
             }
         }
         if (n == 16) {
-            // endGame
+            // endGame, but may not end
         }
        
         n = 0;
@@ -82,7 +88,7 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
             }
         }
         if (n == 16) {
-            // endGame
+            // endGame, but may not end
         }
     }
 
@@ -93,9 +99,7 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
     }
 
     function moveCore(Direction direction) public returns (bool moved){
-        // TODO: moved
         address account = msg.sender;
-        // Vector memory vector = getVector(direction);
         uint256[16] storage grid =  grids[account];
 
         if (direction == Direction.Up) {
@@ -243,12 +247,23 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
 
 
 
+    // mint NFT if have 2048
+    function mint() public {
+        require(_tokenIdCounter.current() < MAX_SUPPLY, "max");
+        address account = msg.sender;
+        uint256[16] storage grid =  grids[account];
+        for (uint256 i = 0; i < 16; i++) {
+            if (grid[i] >= MINT_THRESHOLD) {
+                uint256 tokenId = _tokenIdCounter.current();
+                _tokenIdCounter.increment();
+                _safeMint(account, tokenId);
 
-    function safeMint(address to, string memory uri) public onlyOwner {
-        uint256 tokenId = _tokenIdCounter.current();
-        _tokenIdCounter.increment();
-        _safeMint(to, tokenId);
-        _setTokenURI(tokenId, uri);
+                uint256[16] storage grid2048 = grids2048[tokenId];
+                for (uint256 j = 0; j < 16; i++) {
+                    (grid2048[j], grid[j]) = (grid[j], 0);
+                }
+            }
+        }
     }
 
     // The following functions are overrides required by Solidity.
@@ -257,6 +272,7 @@ contract Super2048 is ERC721, ERC721URIStorage, Ownable {
         super._burn(tokenId);
     }
 
+    // TODO:
     function tokenURI(uint256 tokenId)
         public
         view
