@@ -1,16 +1,24 @@
 import styles from 'styles/Home.module.scss'
 import { ThemeToggleList } from 'components/Theme'
 import { useState } from 'react'
-import { useNetwork, useSwitchNetwork, useAccount, useBalance, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
+import {
+  useNetwork,
+  useSwitchNetwork,
+  useAccount,
+  useBalance,
+  useContractRead,
+  useContractWrite,
+  usePrepareContractWrite,
+} from 'wagmi'
 import ConnectWallet from 'components/Connect/ConnectWallet'
 // import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useConnectModal, useAccountModal, useChainModal } from '@rainbow-me/rainbowkit'
 import { useSignMessage } from 'wagmi'
 
-import Link from 'next/link';
+import Link from 'next/link'
 import GameBoard from '../components/GameBoard'
 import { app } from 'appConfig'
-import { super2048Abi } from 'abis/super2048Abi';
+import { super2048Abi } from 'abis/super2048Abi'
 
 export default function Home() {
   return (
@@ -25,9 +33,7 @@ export default function Home() {
 function Header() {
   return (
     <header className={styles.header}>
-      <div className="flex items-left">
-        {app.title}
-      </div>
+      <div className="items-left flex">{app.title}</div>
 
       <ConnectWallet />
     </header>
@@ -45,23 +51,22 @@ function Main() {
   // const { openAccountModal } = useAccountModal()
   // const { openChainModal } = useChainModal()
 
-
   const { data: gridData, isLoading: gridIsLoading } = useContractRead({
     address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
     abi: super2048Abi,
     functionName: 'getGrid',
     args: [address],
   })
-  
+
   const isEmpty = () => {
-    console.log("gridDatagridData: ", gridData);
-    if (!gridData) return true;
-    let allZeros: boolean = (gridData as number[]).every(value => value === 0);
+    console.log('gridDatagridData: ', gridData)
+    if (!gridData) return true
+    let allZeros: boolean = (gridData as number[]).every(value => value === 0)
     // let allZeros: boolean = boardData.every(value => value === 0);
     if (allZeros) {
-      return true;
+      return true
     }
-    return false;
+    return false
   }
 
   const { config: startGameConfig } = usePrepareContractWrite({
@@ -71,13 +76,12 @@ function Main() {
   })
   const { write: startGameWrite } = useContractWrite(startGameConfig)
 
-
   // TODO: can't fix this
   const { config: moveUpConfig } = usePrepareContractWrite({
     address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
     abi: super2048Abi,
     functionName: 'move',
-    args: [0]
+    args: [0],
   })
   const { write: moveUpWrite } = useContractWrite(moveUpConfig)
 
@@ -85,7 +89,7 @@ function Main() {
     address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
     abi: super2048Abi,
     functionName: 'move',
-    args: [1]
+    args: [1],
   })
   const { write: moveDownWrite } = useContractWrite(moveDownConfig)
 
@@ -93,7 +97,7 @@ function Main() {
     address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
     abi: super2048Abi,
     functionName: 'move',
-    args: [2]
+    args: [2],
   })
   const { write: moveLeftWrite } = useContractWrite(moveLeftConfig)
 
@@ -101,12 +105,12 @@ function Main() {
     address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
     abi: super2048Abi,
     functionName: 'move',
-    args: [0]
+    args: [0],
   })
   const { write: moveRightWrite } = useContractWrite(moveRightConfig)
 
   const canMint = () => {
-    return false;
+    return false
   }
 
   const { config: mintConfig } = usePrepareContractWrite({
@@ -121,14 +125,21 @@ function Main() {
       <div className="flex flex-col items-center justify-center bg-gray-100">
         {isEmpty() ? (
           <div className="relative">
-            <GameBoard gridData={gridData as number[]}/>
-            <div className="absolute inset-0 bg-gray-500 opacity-50 flex items-center justify-center">
-            <button onClick={() => {isConnected?'':startGameWrite?.()}}  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-5 px-20 rounded-full">Start Game</button>
-            {/* <button onClick={() => startGame()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-5 px-20 rounded-full">Start Game</button> */}
+            <GameBoard gridData={gridData as number[]} />
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-500 opacity-50">
+              <button
+                onClick={() => {
+                  isConnected ? '' : startGameWrite?.()
+                }}
+                className="rounded-full bg-blue-500 px-20 py-5 font-bold text-white hover:bg-blue-700"
+              >
+                Start Game
+              </button>
+              {/* <button onClick={() => startGame()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-5 px-20 rounded-full">Start Game</button> */}
             </div>
           </div>
         ) : (
-          <GameBoard gridData={gridData as number[]}/>
+          <GameBoard gridData={gridData as number[]} />
         )}
         {/* <GameBoard board={board}/> */}
         <div className="mt-4 flex items-center">
@@ -137,7 +148,7 @@ function Main() {
           </button>
 
           <div className="flex flex-col">
-            <button onClick={() =>  moveUpWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
+            <button onClick={() => moveUpWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
               ⬆️
             </button>
             <button onClick={() => moveDownWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
@@ -150,14 +161,15 @@ function Main() {
           </button>
         </div>
         <div className="mt-4 flex items-center">
-          {canMint()? (
-            <button onClick={() =>mintWite?.()} className="m-2 rounded bg-yellow-500 px-10 py-2 text-white">Mint</button>
+          {canMint() ? (
+            <button onClick={() => mintWite?.()} className="m-2 rounded bg-yellow-500 px-10 py-2 text-white">
+              Mint
+            </button>
           ) : (
-            <button disabled className="m-2 rounded bg-gray-500 px-10 py-2 text-white">Mint</button>
-          )
-          }
-          
-           
+            <button disabled className="m-2 rounded bg-gray-500 px-10 py-2 text-white">
+              Mint
+            </button>
+          )}
         </div>
       </div>
     </main>
@@ -201,10 +213,7 @@ function Footer() {
       <div>
         <ThemeToggleList />
       </div>
-      <Link href="https://ethglobal.com/showcase/super2048-3hvmz">
-            About
-          </Link>
+      <Link href="https://ethglobal.com/showcase/super2048-3hvmz">About</Link>
     </footer>
   )
 }
-
