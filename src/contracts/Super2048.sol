@@ -57,6 +57,7 @@ contract Super2048 is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         emit GameStarted(account);
 
         _randomGrid(account);
+        _randomGrid(account);
     }
 
     function forceStartGame() public {
@@ -69,21 +70,14 @@ contract Super2048 is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         emit GameStarted(account);
 
         _randomGrid(account);
+        _randomGrid(account);
     }
 
     function _randomGrid(address account) internal {
         bytes32 seed0 = keccak256(abi.encodePacked(seed, address(this), block.number, block.timestamp, account));
         uint256 i = uint256(seed0) % 16;
         seed = keccak256(abi.encodePacked(seed0));
-        uint256 j = uint256(seed) % 16;
-        seed = keccak256(abi.encodePacked(seed));
         uint256 m = uint256(seed) % 16;
-        seed = keccak256(abi.encodePacked(seed));
-        uint256 n = uint256(seed) % 16;
-
-        if (i == j) {
-            j = (j + 1)%16;
-        }
        
         uint256[16] storage grid =  grids[account];
         uint256 k = 0;
@@ -95,21 +89,6 @@ contract Super2048 is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
                     grid[(k+i)%16] = 2;
                 }
                 break;
-            }
-        }
-        // if (k == 16) {
-        //     // no need to add, and may not end
-        // }
-       
-        k = 0;
-        for (k = 0; k < 16; k++) {
-            if (grid[(k+j)%16] == 0) {
-                if (n == 6 || n == 9) {
-                    grid[(k+j)%16] = 4;
-                } else {
-                    grid[(k+j)%16] = 2;
-                }
-                break ;
             }
         }
         // if (k == 16) {
