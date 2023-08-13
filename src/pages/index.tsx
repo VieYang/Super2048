@@ -51,7 +51,7 @@ function Main() {
   // const { openAccountModal } = useAccountModal()
   // const { openChainModal } = useChainModal()
 
-  const contractAddress = '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD';
+  const contractAddress = '0x20480ca56dcedDF6382899e5BF576495722a3EfF';
 
   const { data: gridData, isLoading: gridIsLoading } = useContractRead({
     address: contractAddress,

@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react'
 import HeadGlobal from 'components/HeadGlobal'
 // Web3Wrapper deps:
 import { getDefaultWallets, RainbowKitProvider, lightTheme, darkTheme } from '@rainbow-me/rainbowkit'
-import { mainnet, optimism, base, zora, optimismGoerli } from 'wagmi/chains'
+import { mainnet, optimism, base, zora } from 'wagmi/chains'
 import { createConfig, configureChains, WagmiConfig } from 'wagmi'
 // import { infuraProvider } from 'wagmi/providers/infura'
 // import { alchemyProvider } from 'wagmi/providers/alchemy'
@@ -29,7 +29,7 @@ export default App
 
 // Web3 Configs
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, optimism, base, zora, optimismGoerli],
+  [optimism, base, zora],
   [
     // infuraProvider({ apiKey: process.env.NEXT_PUBLIC_INFURA_ID !== '' && process.env.NEXT_PUBLIC_INFURA_ID }),
     // alchemyProvider({ apiKey: process.env.NEXT_PUBLIC_ALCHEMY_ID !== '' && process.env.NEXT_PUBLIC_ALCHEMY_ID }),
@@ -61,7 +61,7 @@ export function Web3Wrapper({ children }) {
           learnMoreUrl: app.url,
         }}
         chains={chains}
-        initialChain={optimismGoerli.id} // Optional, initialChain={1}, initialChain={chain.mainnet}, initialChain={gnosisChain}
+        initialChain={base.id} // Optional, initialChain={1}, initialChain={chain.mainnet}, initialChain={gnosisChain}
         showRecentTransactions={true}
         theme={resolvedTheme === 'dark' ? darkTheme() : lightTheme()}
       >
