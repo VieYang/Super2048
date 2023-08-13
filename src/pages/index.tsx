@@ -65,7 +65,7 @@ function Main() {
 
   const isEmpty = () => {
     if (!gridData) return true
-    let allZeros: boolean = (gridData as number[]).every(value => value === 0)
+    let allZeros: boolean = (gridData as number[]).every(value => value == 0)
     // let allZeros: boolean = boardData.every(value => value === 0);
     if (allZeros) {
       return true
@@ -142,7 +142,7 @@ function Main() {
             <div className="absolute inset-0 flex items-center justify-center bg-gray-500 opacity-50">
               <button
                 onClick={() => {
-                  isConnected ? '' : startGameWrite?.()
+                  isConnected ? startGameWrite?.() : ''
                 }}
                 className="rounded-full bg-blue-500 px-20 py-5 font-bold text-white hover:bg-blue-700"
               >
