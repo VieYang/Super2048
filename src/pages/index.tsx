@@ -2,6 +2,7 @@ import styles from 'styles/Home.module.scss'
 import { ThemeToggleList } from 'components/Theme'
 import { useState } from 'react'
 import {
+  Address,
   // useNetwork,
   // useSwitchNetwork,
   useAccount,
@@ -51,7 +52,7 @@ function Main() {
   // const { openAccountModal } = useAccountModal()
   // const { openChainModal } = useChainModal()
 
-  const contractAddress = '0x20480ca56dcedDF6382899e5BF576495722a3EfF';
+  const contractAddress = process.env.NEXT_PUBLIC_CONTRACT_ADDRESS as Address;
 
   const { data: gridData, isLoading: gridIsLoading } = useContractRead({
     address: contractAddress,
