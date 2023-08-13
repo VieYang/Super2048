@@ -1,11 +1,9 @@
 import React from 'react'
 
 const GameBoard: React.FC<{ gridData: number[] }> = ({ gridData }) => {
-  console.log('gridData: ', gridData)
-
   let board = Array(4)
     .fill(null)
-    .map(() => Array(4).fill(1))
+    .map(() => Array(4).fill(0))
   if (gridData) {
     let i = 0
     board = Array(4)

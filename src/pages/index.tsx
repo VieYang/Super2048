@@ -51,15 +51,18 @@ function Main() {
   // const { openAccountModal } = useAccountModal()
   // const { openChainModal } = useChainModal()
 
+  const contractAddress = '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD';
+
   const { data: gridData, isLoading: gridIsLoading } = useContractRead({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'getGrid',
     args: [address],
+    watch: true,
+    staleTime: 3_000,
   })
 
   const isEmpty = () => {
-    console.log('gridDatagridData: ', gridData)
     if (!gridData) return true
     let allZeros: boolean = (gridData as number[]).every(value => value === 0)
     // let allZeros: boolean = boardData.every(value => value === 0);
@@ -70,7 +73,7 @@ function Main() {
   }
 
   const { config: startGameConfig } = usePrepareContractWrite({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'startGame',
   })
@@ -78,43 +81,51 @@ function Main() {
 
   // TODO: can't fix this
   const { config: moveUpConfig } = usePrepareContractWrite({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'move',
     args: [0],
+    gas: 222_222,
   })
   const { write: moveUpWrite } = useContractWrite(moveUpConfig)
 
   const { config: moveDownConfig } = usePrepareContractWrite({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'move',
     args: [1],
+    gas: 222_222,
   })
   const { write: moveDownWrite } = useContractWrite(moveDownConfig)
 
   const { config: moveLeftConfig } = usePrepareContractWrite({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'move',
     args: [2],
+    gas: 222_222,
   })
   const { write: moveLeftWrite } = useContractWrite(moveLeftConfig)
 
   const { config: moveRightConfig } = usePrepareContractWrite({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'move',
-    args: [0],
+    args: [3],
+    gas: 222_222,
   })
   const { write: moveRightWrite } = useContractWrite(moveRightConfig)
 
   const canMint = () => {
+    let i = 0;
+    for (i = 0; i < 16; i++) {
+      if (gridData[i] >= 2048) return true;
+    }
     return false
   }
 
   const { config: mintConfig } = usePrepareContractWrite({
-    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    address: contractAddress,
     abi: super2048Abi,
     functionName: 'mint',
   })
