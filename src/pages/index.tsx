@@ -117,6 +117,7 @@ function Main() {
   const { write: moveRightWrite } = useContractWrite(moveRightConfig)
 
   const canMint = () => {
+    if (!gridData) return false;
     let i = 0;
     for (i = 0; i < 16; i++) {
       if (gridData[i] >= 2048) return true;
