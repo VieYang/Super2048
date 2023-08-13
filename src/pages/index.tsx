@@ -1,11 +1,16 @@
 import styles from 'styles/Home.module.scss'
-import { ThemeToggleButton, ThemeToggleList } from 'components/Theme'
+import { ThemeToggleList } from 'components/Theme'
 import { useState } from 'react'
-import { useNetwork, useSwitchNetwork, useAccount, useBalance } from 'wagmi'
+import { useNetwork, useSwitchNetwork, useAccount, useBalance, useContractRead, useContractWrite, usePrepareContractWrite } from 'wagmi'
 import ConnectWallet from 'components/Connect/ConnectWallet'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
+// import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useConnectModal, useAccountModal, useChainModal } from '@rainbow-me/rainbowkit'
 import { useSignMessage } from 'wagmi'
+
+import Link from 'next/link';
+import GameBoard from '../components/GameBoard'
+import { app } from 'appConfig'
+import { super2048Abi } from 'abis/super2048Abi';
 
 export default function Home() {
   return (
@@ -20,134 +25,140 @@ export default function Home() {
 function Header() {
   return (
     <header className={styles.header}>
-      <div>
-        <ThemeToggleList />
-      </div>
-      <div className="flex items-center">
-        <ThemeToggleButton /> header <ThemeToggleList />
+      <div className="flex items-left">
+        {app.title}
       </div>
 
-      <div className="flex items-center">
-        <ThemeToggleButton />
-        <ThemeToggleList />
-      </div>
+      <ConnectWallet />
     </header>
   )
 }
 
 function Main() {
   const { address, isConnected, connector } = useAccount()
-  const { chain, chains } = useNetwork()
-  const { isLoading: isNetworkLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
-  const { data: balance, isLoading: isBalanceLoading } = useBalance({
-    address: address,
+  // const { chain, chains } = useNetwork()
+  // const { isLoading: isNetworkLoading, pendingChainId, switchNetwork } = useSwitchNetwork()
+  // const { data: balance, isLoading: isBalanceLoading } = useBalance({
+  //   address: address,
+  // })
+  // const { openConnectModal } = useConnectModal()
+  // const { openAccountModal } = useAccountModal()
+  // const { openChainModal } = useChainModal()
+
+
+  const { data: gridData, isLoading: gridIsLoading } = useContractRead({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'getGrid',
+    args: [address],
   })
-  const { openConnectModal } = useConnectModal()
-  const { openAccountModal } = useAccountModal()
-  const { openChainModal } = useChainModal()
+  
+  const isEmpty = () => {
+    console.log("gridDatagridData: ", gridData);
+    if (!gridData) return true;
+    let allZeros: boolean = (gridData as number[]).every(value => value === 0);
+    // let allZeros: boolean = boardData.every(value => value === 0);
+    if (allZeros) {
+      return true;
+    }
+    return false;
+  }
+
+  const { config: startGameConfig } = usePrepareContractWrite({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'startGame',
+  })
+  const { write: startGameWrite } = useContractWrite(startGameConfig)
+
+
+  // TODO: can't fix this
+  const { config: moveUpConfig } = usePrepareContractWrite({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'move',
+    args: [0]
+  })
+  const { write: moveUpWrite } = useContractWrite(moveUpConfig)
+
+  const { config: moveDownConfig } = usePrepareContractWrite({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'move',
+    args: [1]
+  })
+  const { write: moveDownWrite } = useContractWrite(moveDownConfig)
+
+  const { config: moveLeftConfig } = usePrepareContractWrite({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'move',
+    args: [2]
+  })
+  const { write: moveLeftWrite } = useContractWrite(moveLeftConfig)
+
+  const { config: moveRightConfig } = usePrepareContractWrite({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'move',
+    args: [0]
+  })
+  const { write: moveRightWrite } = useContractWrite(moveRightConfig)
+
+  const canMint = () => {
+    return false;
+  }
+
+  const { config: mintConfig } = usePrepareContractWrite({
+    address: '0xbdf2f456b615dBE7CD89894F2206FC98d4Be3bAD',
+    abi: super2048Abi,
+    functionName: 'mint',
+  })
+  const { write: mintWite } = useContractWrite(mintConfig)
+
   return (
     <main className={styles.main + ' space-y-6'}>
-      <div className="text-center">
-        <p className="font-medium">Dapp Starter Boilerplate by arisac.eth</p>
-        <p>
-          <a
-            href="https://github.com/arisac/dapp-starter"
-            target="_blank"
-            className="text-sm underline"
-            rel="noreferrer"
-          >
-            https://github.com/arisac/dapp-starter
-          </a>
-        </p>
-      </div>
+      <div className="flex flex-col items-center justify-center bg-gray-100">
+        {isEmpty() ? (
+          <div className="relative">
+            <GameBoard gridData={gridData as number[]}/>
+            <div className="absolute inset-0 bg-gray-500 opacity-50 flex items-center justify-center">
+            <button onClick={() => {isConnected?'':startGameWrite?.()}}  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-5 px-20 rounded-full">Start Game</button>
+            {/* <button onClick={() => startGame()} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-5 px-20 rounded-full">Start Game</button> */}
+            </div>
+          </div>
+        ) : (
+          <GameBoard gridData={gridData as number[]}/>
+        )}
+        {/* <GameBoard board={board}/> */}
+        <div className="mt-4 flex items-center">
+          <button onClick={() => moveLeftWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
+            ⬅️
+          </button>
 
-      <div>
-        <h4 className="text-center text-sm font-medium">demo: ConnectWalletBtn Full</h4>
-        <div className="flex w-full flex-col items-center">
-          <ConnectWallet />
+          <div className="flex flex-col">
+            <button onClick={() =>  moveUpWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
+              ⬆️
+            </button>
+            <button onClick={() => moveDownWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
+              ⬇️
+            </button>
+          </div>
+
+          <button onClick={() => moveRightWrite?.()} className="m-2 rounded bg-blue-500 px-4 py-2 text-white">
+            ➡️
+          </button>
         </div>
-      </div>
-
-      <div>
-        <h4 className="text-center text-sm font-medium">demo: useModal (rainbowkit ^0.4.3)</h4>
-        <div className="flex w-full flex-col items-center">
-          {openConnectModal && (
-            <button
-              onClick={openConnectModal}
-              type="button"
-              className="m-1 rounded-lg bg-orange-500 px-3 py-1 text-white transition-all duration-150 hover:scale-105"
-            >
-              useConnectModal
-            </button>
-          )}
-
-          {openAccountModal && (
-            <button
-              onClick={openAccountModal}
-              type="button"
-              className="m-1 rounded-lg bg-orange-500 px-3 py-1 text-white transition-all duration-150 hover:scale-105"
-            >
-              useAccountModal
-            </button>
-          )}
-
-          {openChainModal && (
-            <button
-              onClick={openChainModal}
-              type="button"
-              className="m-1 rounded-lg bg-orange-500 px-3 py-1 text-white transition-all duration-150 hover:scale-105"
-            >
-              useChainModal
-            </button>
-          )}
+        <div className="mt-4 flex items-center">
+          {canMint()? (
+            <button onClick={() =>mintWite?.()} className="m-2 rounded bg-yellow-500 px-10 py-2 text-white">Mint</button>
+          ) : (
+            <button disabled className="m-2 rounded bg-gray-500 px-10 py-2 text-white">Mint</button>
+          )
+          }
+          
+           
         </div>
-      </div>
-
-      <div className="w-full max-w-xl rounded-xl bg-sky-500/10 p-6 text-center">
-        <dl className={styles.dl}>
-          <dt>Connector</dt>
-          <dd>
-            {connector?.name}
-            {!address && (
-              <ConnectButton.Custom>
-                {({ openConnectModal }) => (
-                  <span onClick={openConnectModal} className="cursor-pointer hover:underline">
-                    Not connected, connect wallet
-                  </span>
-                )}
-              </ConnectButton.Custom>
-            )}
-          </dd>
-          <dt>Connected Network</dt>
-          <dd>{chain ? `${chain?.id}: ${chain?.name}` : 'n/a'}</dd>
-          <dt>Switch Network</dt>
-          <dd className="flex flex-wrap justify-center">
-            {isConnected &&
-              chains.map(x => (
-                <button
-                  disabled={!switchNetwork || x.id === chain?.id}
-                  key={x.id}
-                  onClick={() => switchNetwork?.(x.id)}
-                  className={
-                    (x.id === chain?.id ? 'bg-green-500' : 'bg-blue-500 hover:scale-105') +
-                    ' m-1 rounded-lg px-3 py-1 text-white transition-all duration-150'
-                  }
-                >
-                  {x.name}
-                  {isNetworkLoading && pendingChainId === x.id && ' (switching)'}
-                </button>
-              ))}
-            <ConnectWallet show="disconnected" />
-          </dd>
-          <dt>Account</dt>
-          <dd className="break-all">{address ? `${address}` : 'n/a'}</dd>
-          <dt>Balance</dt>
-          <dd className="break-all">
-            {isBalanceLoading ? 'loading' : balance ? `${balance?.formatted} ${balance?.symbol}` : 'n/a'}
-          </dd>
-          <dt>Sign Message</dt>
-          <dd className="break-all">{address ? <SignMsg /> : 'n/a'} </dd>
-        </dl>
       </div>
     </main>
   )
@@ -190,14 +201,10 @@ function Footer() {
       <div>
         <ThemeToggleList />
       </div>
-      <div className="flex items-center">
-        <ThemeToggleButton /> footer <ThemeToggleList />
-      </div>
-
-      <div className="flex items-center">
-        <ThemeToggleButton />
-        <ThemeToggleList />
-      </div>
+      <Link href="https://ethglobal.com/showcase/super2048-3hvmz">
+            About
+          </Link>
     </footer>
   )
 }
+

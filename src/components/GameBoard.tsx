@@ -1,7 +1,14 @@
 import React from 'react'
 
-const GameBoard: React.FC<{ board: number[][] }> = ({ board }) => {
-  if (!board) return null
+const GameBoard: React.FC<{ gridData: number[]}> = ({ gridData }) => {
+  console.log("gridData: ", gridData);
+
+  let board = Array(4).fill(null).map(() => Array(4).fill(1))
+  if (gridData) {
+    let i = 0;
+    board = Array(4).fill(null).map(() => Array(4).fill(0).
+      map(() => gridData[i++]))
+  }
 
   return (
     <div className="grid grid-cols-4 gap-4 rounded-xl bg-gray-300 p-4">
@@ -13,7 +20,8 @@ const GameBoard: React.FC<{ board: number[][] }> = ({ board }) => {
               cellValue ? 'bg-gray-500' : 'bg-gray-400'
             }`}
           >
-            {cellValue ? cellValue : ''}
+          {/* {cellValue ? cellValue: ''} */}
+          {cellValue ? `${cellValue}` : ''}
           </div>
         ))
       )}
