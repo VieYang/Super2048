@@ -1,10 +1,8 @@
-# dApp Starter Boilerplate
+# [Super2048](https://ethglobal.com/showcase/super2048-3hvmz)
 
-A dApp starter kit template to quick start a dapp project with Next.js + Tailwind CSS + Ethers + wagmi + RainbowKit.
+A fun onchain game of 2048 based on superchain with onchain image of svg.
 
-Other tools/components included: Headless UI, Heroicons, Autoprefixer, Sass, PostCSS, ESLint, Prettier.
-
-Live preview for this repo: https://dapp-starter.aris.ac
+Create at [**Superhack**](https://ethglobal.com/events/superhack) with [Dapp Starter](https://github.com/arisac/dapp-starter).
 
 ## Getting Started
 
