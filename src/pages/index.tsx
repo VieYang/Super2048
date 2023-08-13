@@ -2,17 +2,17 @@ import styles from 'styles/Home.module.scss'
 import { ThemeToggleList } from 'components/Theme'
 import { useState } from 'react'
 import {
-  useNetwork,
-  useSwitchNetwork,
+  // useNetwork,
+  // useSwitchNetwork,
   useAccount,
-  useBalance,
+  // useBalance,
   useContractRead,
   useContractWrite,
   usePrepareContractWrite,
 } from 'wagmi'
 import ConnectWallet from 'components/Connect/ConnectWallet'
 // import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useConnectModal, useAccountModal, useChainModal } from '@rainbow-me/rainbowkit'
+// import { useConnectModal, useAccountModal, useChainModal } from '@rainbow-me/rainbowkit'
 import { useSignMessage } from 'wagmi'
 
 import Link from 'next/link'
